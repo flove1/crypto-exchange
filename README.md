@@ -25,15 +25,7 @@ This API tracks exchange rates of various cryptocurrencies based on the Binance 
    ```
 
 3. Set up environment variables:
-   - Copy
-
-.env.example
-
-to
-
-.env
-
-and update the values as needed.
+   - Copy ```.env.example``` to ```.env``` and update the values as needed.
 
 ### Running the Application
 
