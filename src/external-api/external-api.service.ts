@@ -18,12 +18,11 @@ import * as CircuitBreaker from 'opossum';
 import { AxiosError } from 'axios';
 
 const JOB_PREFIX = 'fetch-rate';
+const BINANCE_API_URL = 'https://api.binance.com/api/v3/ticker/price';
 
 @Injectable()
 export class ExternalApiService {
   private readonly logger = new Logger(ExternalApiService.name);
-  private readonly BINANCE_API_URL =
-    'https://api.binance.com/api/v3/ticker/price';
 
   private readonly circuitBreaker: CircuitBreaker;
 
@@ -87,7 +86,7 @@ export class ExternalApiService {
 
   async fetchCryptoRate(symbol: string): Promise<number> {
     return lastValueFrom(
-      this.httpService.get<{ price: string }>(this.BINANCE_API_URL, {
+      this.httpService.get<{ price: string }>(BINANCE_API_URL, {
         params: { symbol },
       }),
     ).then((response) => {
@@ -108,7 +107,7 @@ export class ExternalApiService {
     const symbol = `${pair.baseCurrency}${pair.quoteCurrency}`;
 
     return lastValueFrom(
-      this.httpService.get<{ price: string }>(this.BINANCE_API_URL, {
+      this.httpService.get<{ price: string }>(BINANCE_API_URL, {
         params: { symbol },
       }),
     )
