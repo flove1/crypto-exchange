@@ -1,0 +1,38 @@
+services:
+  db:
+    container_name: crypto-db
+    image: postgres
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - 5432:5432
+    networks:
+      - crypto-network
+
+  app:
+    container_name: crypto-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=crypto-db
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+    command: 'npm run start:prod'
+    ports:
+      - 3000:3000
+    networks:
+      - crypto-network
+
+volumes:
+  pg-data:
+
+networks:
+  crypto-network:
+    driver: bridge
