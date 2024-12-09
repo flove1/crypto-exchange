@@ -14,8 +14,8 @@ This API tracks exchange rates of various cryptocurrencies based on the Binance 
 1. Clone the repository:
 
    ```sh
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/flove1/crypto-exchange
+   cd crypto-exchange
    ```
 
 2. Install dependencies:
