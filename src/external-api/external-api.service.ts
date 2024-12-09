@@ -1,11 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CronJob, CronTime } from 'cron';
@@ -23,12 +17,11 @@ const BINANCE_API_URL = 'https://api.binance.com/api/v3/ticker/price';
 @Injectable()
 export class ExternalApiService {
   private readonly logger = new Logger(ExternalApiService.name);
-
   private readonly circuitBreaker: CircuitBreaker;
 
   constructor(
     private readonly schedulerRegistry: SchedulerRegistry,
-    @Inject() private readonly httpService: HttpService,
+    private readonly httpService: HttpService,
     @InjectRepository(CryptoRate)
     private readonly rateRepository: Repository<CryptoRate>,
     @InjectRepository(CryptoPair)

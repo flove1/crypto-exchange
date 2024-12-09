@@ -9,7 +9,6 @@ import { ApiOkResponse } from '@nestjs/swagger';
 @Controller('rates')
 export class CryptoRateController {
   constructor(
-    @Inject()
     private readonly rateService: CryptoRateService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}

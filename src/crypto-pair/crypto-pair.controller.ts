@@ -26,7 +26,7 @@ import { ResponseDTO } from '../common/response.dto';
 @Controller('pairs')
 export class CryptoPairController {
   constructor(
-    @Inject() private readonly cryptoPairService: CryptoPairService,
+    private readonly cryptoPairService: CryptoPairService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
