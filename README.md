@@ -101,12 +101,6 @@ To run tests:
 npm test
 ```
 
-To run end-to-end tests:
-
-```sh
-npm run test:e2e
-```
-
 ### API Documentation
 
 API documentation is available at `/api` when the application is running.
