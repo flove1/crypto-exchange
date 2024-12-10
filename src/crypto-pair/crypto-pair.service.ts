@@ -71,20 +71,28 @@ export class CryptoPairService {
       throw new HttpException('Pair not found', HttpStatus.NOT_FOUND);
     }
 
-    const isActivated = !pair.isActive && activated;
-    const isChangedInterval = pair.updateInterval != interval;
+    const isActivationChanged = pair.isActive !== activated;
+    const isIntervalChanged = pair.updateInterval !== interval;
+
+    if (!isActivationChanged && !isIntervalChanged) {
+      return pair;
+    }
 
     pair.updateInterval = interval;
     pair.isActive = activated;
 
-    return this.cryptoPairRepository.save(pair).then((pair) => {
-      if (isActivated) {
-        this.externalApiService.schedule(pair);
-      } else if (pair.isActive && isChangedInterval) {
-        this.externalApiService.reschedule(pair);
+    return this.cryptoPairRepository.save(pair).then((updatedPair) => {
+      if (updatedPair.isActive) {
+        if (isActivationChanged) {
+          this.externalApiService.startJob(updatedPair);
+        } else {
+          this.externalApiService.changeInterval(updatedPair);
+        }
+      } else {
+        this.externalApiService.stopJob(updatedPair);
       }
 
-      return pair;
+      return updatedPair;
     });
   }
 
@@ -97,7 +105,7 @@ export class CryptoPairService {
       throw new HttpException('Pair not found', HttpStatus.NOT_FOUND);
     }
 
-    this.externalApiService.stop(pair);
+    this.externalApiService.stopJob(pair);
 
     return this.cryptoPairRepository.remove(pair);
   }

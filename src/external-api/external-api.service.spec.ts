@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { CryptoRate } from '../crypto-rate/crypto-rate.entity';
 import { CryptoPair } from '../crypto-pair/crypto-pair.entity';
 import { Logger } from '@nestjs/common';
+import { CronJob } from 'cron';
 
 describe('ExternalApiService', () => {
   let service: ExternalApiService;
@@ -64,7 +65,7 @@ describe('ExternalApiService', () => {
       .spyOn(schedulerRegistry, 'addCronJob')
       .mockImplementationOnce(() => {});
 
-    service.schedule(pair);
+    service.startJob(pair);
 
     expect(schedulerRegistry.doesExist).toHaveBeenCalledWith(
       'cron',
@@ -80,8 +81,11 @@ describe('ExternalApiService', () => {
     pair.updateInterval = 10;
 
     jest.spyOn(schedulerRegistry, 'doesExist').mockReturnValue(true);
+    jest
+      .spyOn(schedulerRegistry, 'getCronJob')
+      .mockReturnValue(new CronJob('*/10 * * * *', () => {}));
 
-    service.schedule(pair);
+    service.startJob(pair);
 
     expect(schedulerRegistry.doesExist).toHaveBeenCalledWith(
       'cron',
@@ -98,7 +102,7 @@ describe('ExternalApiService', () => {
     pair.updateInterval = 10;
 
     jest.spyOn(schedulerRegistry, 'getCronJob').mockReturnValue(null);
-    service.reschedule(pair);
+    service.changeInterval(pair);
 
     expect(schedulerRegistry.getCronJob).toHaveBeenCalledWith(
       'fetch-rate-BTCUSD',

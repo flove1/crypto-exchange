@@ -56,7 +56,7 @@ export class ExternalApiService {
     });
 
     records.forEach((pair) => {
-      this.schedule(pair);
+      this.startJob(pair);
     });
   }
 
@@ -121,11 +121,14 @@ export class ExternalApiService {
       });
   }
 
-  schedule(pair: CryptoPair): void {
+  startJob(pair: CryptoPair): void {
     const symbol = `${pair.baseCurrency}${pair.quoteCurrency}`;
     const jobName = `${JOB_PREFIX}-${symbol}`;
 
     if (this.schedulerRegistry.doesExist('cron', jobName)) {
+      const job = this.schedulerRegistry.getCronJob(jobName);
+      job.start();
+
       this.logger.log(`Job ${jobName} already exists. Skipping creation.`);
       return;
     }
@@ -165,11 +168,11 @@ export class ExternalApiService {
     job.start();
 
     this.logger.log(
-      `Scheduled job for ${symbol} with interval ${pair.updateInterval} minutes.`,
+      `Scheduled job for ${symbol} with interval of ${pair.updateInterval} minutes.`,
     );
   }
 
-  reschedule(pair: CryptoPair): void {
+  changeInterval(pair: CryptoPair): void {
     const symbol = `${pair.baseCurrency}${pair.quoteCurrency}`;
     const jobName = `${JOB_PREFIX}-${symbol}`;
     const job = this.schedulerRegistry.getCronJob(jobName);
@@ -182,11 +185,11 @@ export class ExternalApiService {
       );
     } else {
       this.logger.warn(`Job ${jobName} not found, creating it...`);
-      this.schedule(pair);
+      this.startJob(pair);
     }
   }
 
-  stop(pair: CryptoPair): void {
+  stopJob(pair: CryptoPair): void {
     const symbol = `${pair.baseCurrency}${pair.quoteCurrency}`;
     const jobName = `${JOB_PREFIX}-${symbol}`;
     const job = this.schedulerRegistry.getCronJob(jobName);

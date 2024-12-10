@@ -43,6 +43,13 @@ export class GetRatesDTO {
 
   @ApiProperty({
     required: false,
+    description: 'The id of the pair',
+    type: 'number',
+  })
+  pairid?: number;
+
+  @ApiProperty({
+    required: false,
     description:
       'The column by which to sort the rates, can be reversed by prepending with a -',
     type: 'string',

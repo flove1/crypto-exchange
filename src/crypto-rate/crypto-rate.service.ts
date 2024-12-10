@@ -18,6 +18,7 @@ export class CryptoRateService {
       startDate?: Date;
       endDate?: Date;
       sort?: string;
+      pairid?: number;
     },
   ): Promise<{ metadata: PaginationMetadata; data: CryptoRate[] }> {
     const startDate = filter.startDate;
@@ -27,11 +28,13 @@ export class CryptoRateService {
 
     const sortDirection = sort?.startsWith('-') ? 'DESC' : 'ASC';
     const sortField = sort ? sort.replace(/^[-+]/, '') : 'timestamp';
+    const pairid = filter.pairid;
 
     const [records, total] = await this.rateRepository.findAndCount({
       where: {
         ...(startDate && { timestamp: MoreThanOrEqual(startDate) }),
         ...(endDate && { timestamp: LessThanOrEqual(endDate) }),
+        ...(pairid && { pairId: pairid }),
       },
       order: { [sortField]: sortDirection },
       skip: (page - 1) * limit,
